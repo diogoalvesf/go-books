@@ -22,7 +22,6 @@ func NewBookHandlers(service *service.BookService) *BookHandlers {
 // GetBooks lida com a requisição GET /books.
 func (h *BookHandlers) GetBooks(w http.ResponseWriter, r *http.Request) {
 	books, err := h.service.GetBooks()
-
 	if err != nil {
 		http.Error(w, "failed to get books", http.StatusInternalServerError)
 		return
@@ -40,7 +39,6 @@ func (h *BookHandlers) GetBooks(w http.ResponseWriter, r *http.Request) {
 // CreateBook lida com a requisição POST /books.
 func (h *BookHandlers) CreateBook(w http.ResponseWriter, r *http.Request) {
 	var book service.Book
-
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
@@ -59,19 +57,16 @@ func (h *BookHandlers) CreateBook(w http.ResponseWriter, r *http.Request) {
 func (h *BookHandlers) GetBookByID(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
-
 	if err != nil {
 		http.Error(w, "invalid book ID", http.StatusBadRequest)
 		return
 	}
 
 	book, err := h.service.GetBookByID(id)
-
 	if err != nil {
 		http.Error(w, "failed to get book", http.StatusInternalServerError)
 		return
 	}
-
 	if book == nil {
 		http.Error(w, "book not found", http.StatusNotFound)
 		return
@@ -85,19 +80,16 @@ func (h *BookHandlers) GetBookByID(w http.ResponseWriter, r *http.Request) {
 func (h *BookHandlers) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
-
 	if err != nil {
 		http.Error(w, "invalid book ID", http.StatusBadRequest)
 		return
 	}
 
 	var book service.Book
-
 	if err := json.NewDecoder(r.Body).Decode(&book); err != nil {
 		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
-
 	book.ID = id
 
 	if err := h.service.UpdateBook(&book); err != nil {
@@ -113,7 +105,6 @@ func (h *BookHandlers) UpdateBook(w http.ResponseWriter, r *http.Request) {
 func (h *BookHandlers) DeleteBook(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.Atoi(idStr)
-
 	if err != nil {
 		http.Error(w, "invalid book ID", http.StatusBadRequest)
 		return

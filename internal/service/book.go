@@ -29,19 +29,16 @@ func NewBookService(db *sql.DB) *BookService {
 func (s *BookService) CreateBook(book *Book) error {
 	query := "INSERT INTO books (title, author, genre) VALUES (?, ?, ?)"
 	result, err := s.db.Exec(query, book.Title, book.Author, book.Genre)
-
 	if err != nil {
 		return err
 	}
 
 	lastInsertID, err := result.LastInsertId()
-
 	if err != nil {
 		return err
 	}
 
 	book.ID = int(lastInsertID)
-
 	return nil
 }
 
@@ -49,17 +46,14 @@ func (s *BookService) CreateBook(book *Book) error {
 func (s *BookService) GetBooks() ([]Book, error) {
 	query := "SELECT id, title, author, genre FROM books"
 	rows, err := s.db.Query(query)
-
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	var books []Book
-
 	for rows.Next() {
 		var book Book
-
 		if err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Genre); err != nil {
 			return nil, err
 		}
@@ -75,12 +69,10 @@ func (s *BookService) GetBookByID(id int) (*Book, error) {
 	row := s.db.QueryRow(query, id)
 
 	var book Book
-
 	if err := row.Scan(&book.ID, &book.Title, &book.Author, &book.Genre); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
-
 		return nil, err
 	}
 
@@ -105,22 +97,17 @@ func (s *BookService) DeleteBook(id int) error {
 func (s *BookService) SearchBooksByName(name string) ([]Book, error) {
 	query := "SELECT id, title, author, genre FROM books WHERE title LIKE ?"
 	rows, err := s.db.Query(query, "%"+name+"%")
-
 	if err != nil {
 		return nil, err
 	}
-
 	defer rows.Close()
 
 	var books []Book
-
 	for rows.Next() {
 		var book Book
-
 		if err := rows.Scan(&book.ID, &book.Title, &book.Author, &book.Genre); err != nil {
 			return nil, err
 		}
-
 		books = append(books, book)
 	}
 
@@ -130,7 +117,6 @@ func (s *BookService) SearchBooksByName(name string) ([]Book, error) {
 // SimulateReading simula a leitura de um livro com base em um tempo de leitura.
 func (s *BookService) SimulateReading(bookID int, duration time.Duration, results chan<- string) {
 	book, err := s.GetBookByID(bookID)
-
 	if err != nil || book == nil {
 		results <- fmt.Sprintf("Livro com ID %d não encontrado.", bookID)
 		return
@@ -152,11 +138,9 @@ func (s *BookService) SimulateMultipleReadings(bookIDs []int, duration time.Dura
 	}
 
 	var responses []string
-
 	for range bookIDs {
 		responses = append(responses, <-results)
 	}
-
 	close(results) // Fechamento do canal após coleta de todos os resultados
 
 	return responses

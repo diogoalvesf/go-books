@@ -16,11 +16,9 @@ import (
 func main() {
 	// Conexão com o banco de dados SQLite3
 	db, err := sql.Open("mysql", "books:books@tcp(34.44.6.150:3306)/books")
-
 	if err != nil {
 		log.Fatalf("failed to connect to the database: %v", err)
 	}
-
 	defer db.Close()
 
 	// Inicializando o serviço
